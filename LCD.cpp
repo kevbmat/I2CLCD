@@ -9,8 +9,8 @@
 
 // writes to I2C, then waits for 15000ms
 void Genesis::LCD::writeToI2C(unsigned char sent[]) {
-    I2CObj->Write(0x20, sent, 2);
-    Timer->DelayBy1us(5);
+    I2CObj->Write(address, sent, 2);
+    Timer->DelayBy1us(delay);
 }
 
 // method sending both nibbles of
@@ -68,18 +68,28 @@ void Genesis::LCD::resetLCD() {
 }
 
 // initializes the LCD object with the Timer and I2C object
-void Genesis::LCD::initialize(unsigned char address, SysClock* Timer, I2C* I2CObj) {
+void Genesis::LCD::initialize(unsigned char address, int delay, SysClock* Timer, I2C* I2CObj) {
+    this->address = address;
+    this->delay = delay;
     this->Timer = Timer;
     this->I2CObj = I2CObj;
     resetLCD();
 }
 
+// prints the message out onto the LCD
 void Genesis::LCD::printf(const char *message) {
     clear();
     sendToLCD(0x06, true);
+    sendToLCD(0x80, true);
+    int counter = 0;
     while (*message) {
         sendToLCD(*message, false);
         message++;
+        counter++;
+        if (counter == 16) {
+            // set cursor to the second line of display
+            sendToLCD(0xC0, true);
+        }
     }
 }
 

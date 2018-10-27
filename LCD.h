@@ -15,9 +15,7 @@ namespace Genesis {
 
 class LCD {
     public:
-    SysClock* Timer;
-    I2C* I2CObj;
-    void initialize(unsigned char address, SysClock* Timer, I2C* I2CObj);
+    void initialize(unsigned char address, int delay, SysClock* Timer, I2C* I2CObj);
     void printf(const char *message);
     void clear();
 
@@ -25,6 +23,10 @@ class LCD {
     void writeToI2C(unsigned char sent[]);
     void sendToLCD(unsigned char data, bool isCommand);
     void resetLCD();
+    SysClock* Timer;
+    I2C* I2CObj;
+    unsigned char address;
+    int delay;
 };
 
 }
